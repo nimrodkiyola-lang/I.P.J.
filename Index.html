@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amazon FC — Workforce Role Map</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal:    #1D9E75;
+    --teal-lt: #E1F5EE;
+    --teal-dk: #085041;
+    --purple:    #534AB7;
+    --purple-lt: #EEEDFE;
+    --purple-dk: #26215C;
+    --coral:    #D85A30;
+    --coral-lt: #FAECE7;
+    --coral-dk: #4A1B0C;
+    --gray-50:  #F6F5F0;
+    --gray-100: #E8E6DE;
+    --gray-300: #B4B2A9;
+    --gray-500: #5F5E5A;
+    --gray-700: #2C2C2A;
+    --amber:    #BA7517;
+    --amber-lt: #FAEEDA;
+    --text:     #1a1a18;
+    --muted:    #5F5E5A;
+    --border:   rgba(0,0,0,0.09);
+    --radius:   14px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #F6F5F0;
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    background: var(--gray-700);
+    color: #fff;
+    padding: 40px 48px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .site-header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: rgba(29,158,117,0.12);
+  }
+  .site-header::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: 30%;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(83,74,183,0.1);
+  }
+  .header-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 10px;
+  }
+  .site-header h1 {
+    font-size: clamp(22px, 4vw, 34px);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    position: relative;
+    z-index: 1;
+  }
+  .site-header h1 strong { font-weight: 500; color: #fff; }
+  .site-header p {
+    margin-top: 10px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.5);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Section labels ── */
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gray-300);
+    padding: 36px 48px 14px;
+  }
+
+  /* ── Role cards grid ── */
+  .role-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    padding: 0 48px;
+  }
+
+  .role-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 18px 18px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .role-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    border-color: rgba(0,0,0,0.15);
+  }
+  .role-card.active { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(29,158,117,0.12); }
+
+  .role-card .accent {
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  .role-card .card-icon { font-size: 22px; margin-bottom: 10px; display: block; }
+  .role-card .card-name { font-size: 15px; font-weight: 500; margin-bottom: 5px; color: var(--text); }
+  .role-card .card-tag  { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* ── Pipeline bar ── */
+  .pipeline {
+    display: flex;
+    align-items: stretch;
+    margin: 0 48px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .pipeline-step {
+    flex: 1;
+    padding: 14px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    color: var(--text);
+    border-right: 1px solid var(--border);
+  }
+  .pipeline-step:last-child { border-right: none; }
+  .pipeline-step.ps-stow { background: rgba(29,158,117,0.07); }
+  .pipeline-step.ps-pick { background: rgba(55,138,221,0.06); }
+  .pipeline-step.ps-pack { background: rgba(186,117,23,0.07); }
+  .pipeline-step .ps-sub { font-size: 11px; font-weight: 400; color: var(--muted); margin-top: 3px; }
+
+  /* ── Detail panel ── */
+  .detail-panel {
+    margin: 16px 48px 0;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: none;
+  }
+  .detail-panel.open { display: block; animation: slideIn 0.2s ease; }
+  @keyframes slideIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+
+  .detail-head {
+    padding: 18px 20px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-start; gap: 14px;
+  }
+  .detail-head .dh-icon { font-size: 24px; flex-shrink: 0; }
+  .detail-head h3 { font-size: 16px; font-weight: 500; }
+  .detail-head p  { font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.6; }
+
+  .detail-cols {
+    display: grid; grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid var(--border);
+  }
+  .detail-col { padding: 14px 20px; }
+  .detail-col + .detail-col { border-left: 1px solid var(--border); }
+  .dc-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray-300); margin-bottom: 7px; }
+  .dc-val   { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  .tools-wrap { padding: 14px 20px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .tool-pill {
+    font-size: 11px; padding: 4px 10px; border-radius: 99px;
+    background: var(--gray-50); border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .detail-close {
+    position: absolute; top: 14px; right: 16px;
+    font-size: 20px; cursor: pointer; color: var(--gray-300);
+    line-height: 1; padding: 2px 4px;
+  }
+  .detail-close:hover { color: var(--text); }
+
+  /* ── Flowchart SVG container ── */
+  .chart-wrap {
+    margin: 0 48px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 16px 16px;
+    overflow-x: auto;
+  }
+  .chart-wrap svg { display: block; width: 100%; max-width: 680px; margin: 0 auto; }
+
+  /* SVG pre-built classes (mirrored from widget system) */
+  svg text { font-family: 'DM Sans', sans-serif; fill: var(--text); }
+  svg .th { font-size: 14px; font-weight: 500; fill: var(--text); }
+  svg .ts { font-size: 12px; font-weight: 400; fill: var(--muted); }
+  svg .arr { stroke: var(--gray-300); stroke-width: 1.5; fill: none; }
+  svg .box { fill: var(--gray-50); stroke: var(--border); }
+
+  svg .c-purple > rect, svg .c-purple > ellipse { fill: var(--purple-lt); stroke: var(--purple); }
+  svg .c-purple .th { fill: var(--purple-dk); }
+  svg .c-purple .ts { fill: var(--purple); }
+
+  svg .c-teal > rect, svg .c-teal > ellipse { fill: var(--teal-lt); stroke: var(--teal); }
+  svg .c-teal .th { fill: var(--teal-dk); }
+  svg .c-teal .ts { fill: var(--teal); }
+
+  svg .c-coral > rect, svg .c-coral > ellipse { fill: var(--coral-lt); stroke: var(--coral); }
+  svg .c-coral .th { fill: var(--coral-dk); }
+  svg .c-coral .ts { fill: var(--coral); }
+
+  svg .c-gray > rect { fill: var(--gray-50); stroke: var(--gray-100); }
+  svg .c-gray .th { fill: var(--gray-700); }
+  svg .c-gray .ts { fill: var(--gray-500); }
+
+  svg .node { cursor: default; }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    padding: 40px 48px 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--gray-300);
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 600px) {
+    .site-header, .section-label, .role-grid, .pipeline, .detail-panel, .chart-wrap { padding-left: 20px; padding-right: 20px; }
+    .role-grid { padding: 0 20px; }
+    .pipeline, .detail-panel, .chart-wrap { margin-left: 20px; margin-right: 20px; }
+    .detail-cols { grid-template-columns: 1fr; }
+    .detail-col + .detail-col { border-left: none; border-top: 1px solid var(--border); }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-eyebrow">Amazon · Fulfillment Center</div>
+  <h1>Workforce <strong>Role Map</strong></h1>
+  <p>Click any role card to explore responsibilities, collaboration, and key tools.</p>
+</header>
+
+<!-- Core flow -->
+<div class="section-label">Core fulfillment flow</div>
+<div class="role-grid" id="core-grid"></div>
+
+<!-- Pipeline -->
+<div class="section-label">Order fulfillment pipeline</div>
+<div class="pipeline">
+  <div class="pipeline-step ps-stow">Receive &amp; stow<div class="ps-sub">Inventory placed on shelves</div></div>
+  <div class="pipeline-step ps-pick">Pick<div class="ps-sub">Items retrieved for orders</div></div>
+  <div class="pipeline-step ps-pack">Pack<div class="ps-sub">Boxed &amp; labelled</div></div>
+  <div class="pipeline-step">Ship<div class="ps-sub">Dispatched to customer</div></div>
+</div>
+
+<!-- Management -->
+<div class="section-label">Management &amp; support</div>
+<div class="role-grid" id="support-grid"></div>
+
+<!-- Detail panel -->
+<div class="detail-panel" id="detail-panel" style="position:relative;">
+  <span class="detail-close" onclick="closeDetail()">×</span>
+  <div class="detail-head">
+    <div class="dh-icon" id="d-icon"></div>
+    <div><h3 id="d-name"></h3><p id="d-resp"></p></div>
+  </div>
+  <div class="detail-cols">
+    <div class="detail-col">
+      <div class="dc-label">Works closely with</div>
+      <div class="dc-val" id="d-collab"></div>
+    </div>
+    <div class="detail-col">
+      <div class="dc-label">Why this role matters</div>
+      <div class="dc-val" id="d-why"></div>
+    </div>
+  </div>
+  <div class="tools-wrap" id="d-tools"></div>
+</div>
+
+<!-- Flowchart -->
+<div class="section-label">Collaboration flowchart</div>
+<div class="chart-wrap">
+<svg viewBox="0 0 680 660" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- Area Manager -->
+  <g class="c-purple">
+    <rect x="240" y="28" width="200" height="56" rx="8" stroke-width="0.5"/>
+    <text class="th" x="340" y="49" text-anchor="middle" dominant-baseline="central">Area Manager</text>
+    <text class="ts" x="340" y="67" text-anchor="middle" dominant-baseline="central">Oversees zones, safety &amp; KPIs</text>
+  </g>
+  <line x1="340" y1="84" x2="340" y2="126" stroke="#534AB7" stroke-width="1.5" marker-end="url(#arrow)" fill="none"/>
+
+  <!-- Process Assistant -->
+  <g class="c-purple">
+    <rect x="240" y="126" width="200" height="56" rx="8" stroke-width="0.5"/>
+    <text class="th" x="340" y="147" text-anchor="middle" dominant-baseline="central">Process Assistant</text>
+    <text class="ts" x="340" y="165" text-anchor="middle" dominant-baseline="central">Supervises floor teams &amp; targets</text>
+  </g>
+  <!-- PA -> Learning Ambassador -->
+  <line x1="340" y1="182" x2="340" y2="234" stroke="#534AB7" stroke-width="1.5" marker-end="url(#arrow)" fill="none"/>
+  <!-- PA -> Robotics Technician -->
+  <path d="M440 154 L580 154 L580 234" fill="none" stroke="#534AB7" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Learning Ambassador (central) -->
+  <g class="c-teal">
+    <rect x="226" y="234" width="228" height="56" rx="8" stroke-width="0.5"/>
+    <text class="th" x="340" y="255" text-anchor="middle" dominant-baseline="central">Learning Ambassador</text>
+    <text class="ts" x="340" y="273" text-anchor="middle" dominant-baseline="central">Trains &amp; supports all floor roles</text>
+  </g>
+
+  <!-- Robotics Technician -->
+  <g class="c-coral">
+    <rect x="494" y="234" width="172" height="56" rx="8" stroke-width="0.5"/>
+    <text class="th" x="580" y="255" text-anchor="middle" dominant-baseline="central">Robotics Technician</text>
+    <text class="ts" x="580" y="273" text-anchor="middle" dominant-baseline="central">Maintains robots &amp; automation</text>
+  </g>
+
+  <!-- LA -> Stower -->
+  <path d="M280 290 L174 290 L174 358" fill="none" stroke="#1D9E75" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <!-- LA -> Picker -->
+  <line x1="340" y1="290" x2="340" y2="358" stroke="#1D9E75" stroke-width="2.5" marker-end="url(#arrow)" fill="none"/>
+  <!-- LA -> Packer -->
+  <path d="M400 290 L506 290 L506 358" fill="none" stroke="#1D9E75" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+  <!-- Robotics -> Stower (dashed) -->
+  <path d="M494 262 L460 262 L460 340 L248 340 L248 358" fill="none" stroke="#D85A30" stroke-width="1" stroke-dasharray="5 4" marker-end="url(#arrow)"/>
+  <!-- Robotics -> Picker (dashed) -->
+  <path d="M494 270 L470 270 L470 348 L414 348 L414 358" fill="none" stroke="#D85A30" stroke-width="1" stroke-dasharray="5 4" marker-end="url(#arrow)"/>
+
+  <!-- Stower -->
+  <g class="c-teal">
+    <rect x="100" y="358" width="148" height="56" rx="8" stroke-width="0.5"/>
+    <text class="th" x="174" y="379" text-anchor="middle" dominant-baseline="central">Stower</text>
+    <text class="ts" x="174" y="397" text-anchor="middle" dominant-baseline="central">Places inventory on shelves</text>
+  </g>
+
+  <!-- Picker -->
+  <g class="c-teal">
+    <rect x="266" y="358" width="148" height="56" rx="8" stroke-width="0.5"/>
+    <text class="th" x="340" y="379" text-anchor="middle" dominant-baseline="central">Picker</text>
+    <text class="ts" x="340" y="397" text-anchor="middle" dominant-baseline="central">Retrieves items for orders</text>
+  </g>
+
+  <!-- Packer -->
+  <g class="c-teal">
+    <rect x="432" y="358" width="148" height="56" rx="8" stroke-width="0.5"/>
+    <text class="th" x="506" y="379" text-anchor="middle" dominant-baseline="central">Packer</text>
+    <text class="ts" x="506" y="397" text-anchor="middle" dominant-baseline="central">Boxes &amp; labels for shipment</text>
+  </g>
+
+  <!-- Fulfillment flow arrows (thick) -->
+  <line x1="248" y1="386" x2="266" y2="386" stroke="#1D9E75" stroke-width="3" marker-end="url(#arrow)" fill="none"/>
+  <line x1="414" y1="386" x2="432" y2="386" stroke="#1D9E75" stroke-width="3" marker-end="url(#arrow)" fill="none"/>
+
+  <!-- Packer -> Shipped -->
+  <line x1="506" y1="414" x2="506" y2="476" stroke="#1D9E75" stroke-width="1.5" marker-end="url(#arrow)" fill="none"/>
+
+  <!-- Shipped -->
+  <g class="c-gray">
+    <rect x="390" y="476" width="232" height="44" rx="8" stroke-width="0.5"/>
+    <text class="th" x="506" y="498" text-anchor="middle" dominant-baseline="central">Shipped to customer</text>
+  </g>
+
+  <!-- Star markers for closest collaboration -->
+  <text x="257" y="374" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#1D9E75">★</text>
+  <text x="423" y="374" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#1D9E75">★</text>
+
+  <!-- Legend -->
+  <rect x="40" y="556" width="600" height="84" rx="6" fill="#F6F5F0" stroke="rgba(0,0,0,0.09)" stroke-width="0.5"/>
+  <text x="340" y="575" text-anchor="middle" font-size="11" font-weight="500" fill="#5F5E5A" font-family="DM Mono, monospace" letter-spacing="0.08em">LEGEND</text>
+  <line x1="64"  y1="598" x2="110" y2="598" stroke="#534AB7" stroke-width="1.5" marker-end="url(#arrow)" fill="none"/>
+  <text x="116" y="602" font-size="12" fill="#5F5E5A" dominant-baseline="central" font-family="DM Sans, sans-serif">Management authority</text>
+  <line x1="64"  y1="622" x2="110" y2="622" stroke="#1D9E75" stroke-width="3" marker-end="url(#arrow)" fill="none"/>
+  <text x="116" y="626" font-size="12" fill="#5F5E5A" dominant-baseline="central" font-family="DM Sans, sans-serif">Closest collaboration (★)</text>
+  <line x1="310" y1="598" x2="356" y2="598" stroke="#1D9E75" stroke-width="1.5" marker-end="url(#arrow)" fill="none"/>
+  <text x="362" y="602" font-size="12" fill="#5F5E5A" dominant-baseline="central" font-family="DM Sans, sans-serif">Direct training / support</text>
+  <line x1="310" y1="622" x2="356" y2="622" stroke="#D85A30" stroke-width="1" stroke-dasharray="5 4" marker-end="url(#arrow)" fill="none"/>
+  <text x="362" y="626" font-size="12" fill="#5F5E5A" dominant-baseline="central" font-family="DM Sans, sans-serif">Technical backup support</text>
+</svg>
+</div>
+
+<div class="footer">Amazon Fulfillment Center · Workforce Role Map</div>
+
+<script>
+const roles = [
+  { name:"Stower", tag:"Puts inventory into its place", icon:"📦", tier:"core", color:"#1D9E75",
+    resp:"Places incoming products onto warehouse shelves in their correct storage locations using handheld scanners.",
+    collab:"Works closely with Packers and Pickers to ensure inventory is accessible and correctly placed.",
+    why:"Ensures inventory accuracy and efficient retrieval during the picking process.",
+    tools:["Nike UI","SFC","FC Research","Andon System","FOS","Zebra MC3300","AR Pods","AR Drives (Kiva)","Totes","V-Nets","Safety Gloves","Hi-Vis Vest"] },
+  { name:"Picker", tag:"Retrieves items for customer orders", icon:"🔍", tier:"core", color:"#378ADD",
+    resp:"Retrieves products from shelves according to customer orders using scanning devices.",
+    collab:"Relies on Stowers to keep items organised; hands off to Packers after picking.",
+    why:"Directly affects order speed and accuracy — the bridge between stored inventory and fulfilled orders.",
+    tools:["Nike AR Pick UI","SFC","FOS","Andon System","AR Drives","Zebra MC3300","Totes","Conveyor Systems","OP Machine","Fall Protection","Dashboard"] },
+  { name:"Packer", tag:"Boxes and labels for shipment", icon:"🗃️", tier:"core", color:"#BA7517",
+    resp:"Packs items into boxes, adds protection, and labels packages for shipment.",
+    collab:"Depends on Pickers for correct items; hands off to Shipping Associates for dispatch.",
+    why:"Ensures safe, accurate, and timely delivery of orders.",
+    tools:["AFE","Pack Flow","SmartPac","SLAM","P-Pack / P-Sort","WAT Machine","Zebra MC3300","Dunnage Machine","SP00 Labels","Andon System","Jiffy Envelopes"] },
+];
+
+const support = [
+  { name:"Process Assistant", tag:"Supervises floor teams & targets", icon:"📋", tier:"support", color:"#534AB7",
+    resp:"Oversees small teams, monitors performance, and ensures targets are met.",
+    collab:"Coordinates between Area Managers and frontline workers; leads day-to-day floor operations.",
+    why:"Keeps workflows efficient and ensures daily operational goals are achieved.",
+    tools:["FCLM","SCC","Station Command","FC Research","MyTime/Kronos","Rodeo","ADAPT","Perfect Mile","Quip","Learning Train","Slack/Chime","Tableau","Zebra Scanner"] },
+  { name:"Area Manager", tag:"Manages full zones & standards", icon:"🏗️", tier:"support", color:"#D85A30",
+    resp:"Manages entire zones, ensuring productivity, safety, and quality standards are met.",
+    collab:"Reports upwards; collaborates directly with Process Assistants and frontline workers.",
+    why:"Aligns day-to-day operations with larger business goals.",
+    tools:["SCC","ADAPT","FCLM","Station Command","Compass","Perfect Mile","MyTime/Kronos","AtoZ","Slack/Chime","QuickSight/Tableau","Rodeo","P-Symphony","Gensuite"] },
+  { name:"Learning Ambassador", tag:"Trains & reinforces best practices", icon:"🎓", tier:"support", color:"#1D9E75",
+    resp:"Trains new employees, answers questions, and reinforces best practices in safety and efficiency.",
+    collab:"Supports all roles — especially new Stowers, Pickers, and Packers across the floor.",
+    why:"Improves workforce skill, morale, and consistency across operations.",
+    tools:["Handheld Scanner","LMS / Kindle","Internal audit tools","Laptop/Desktop","Performance Tracking Dashboards","Amazon Internal Comms"] },
+  { name:"Robotics Technician", tag:"Maintains automation & robots", icon:"🤖", tier:"support", color:"#185FA5",
+    resp:"Maintains the robots and automated systems that move inventory; assists when automated processes fail.",
+    collab:"Works with Pickers and Stowers when machines misplace or stall items.",
+    why:"Keeps automation running smoothly — a critical backbone of the modern FC.",
+    tools:["Infor EAM","MMA","Ignition SCADA","AR Tech Tool","Symphony","Pulse","RSLogix 5000","FactoryTalk","Cognex/Keyence","Fluke DMM","LOTO Kit","FLIR Camera","VFD Tools"] },
+];
+
+let activeCard = null;
+
+function buildGrid(containerId, data) {
+  const grid = document.getElementById(containerId);
+  data.forEach(role => {
+    const card = document.createElement('div');
+    card.className = 'role-card';
+    card.innerHTML = `
+      <div class="accent" style="background:${role.color}"></div>
+      <span class="card-icon">${role.icon}</span>
+      <div class="card-name">${role.name}</div>
+      <div class="card-tag">${role.tag}</div>
+    `;
+    card.addEventListener('click', () => showDetail(role, card));
+    grid.appendChild(card);
+  });
+}
+
+buildGrid('core-grid', roles);
+buildGrid('support-grid', support);
+
+function showDetail(role, card) {
+  if (activeCard) activeCard.classList.remove('active');
+  card.classList.add('active');
+  activeCard = card;
+  document.getElementById('d-icon').textContent = role.icon;
+  document.getElementById('d-name').textContent = role.name;
+  document.getElementById('d-resp').textContent = role.resp;
+  document.getElementById('d-collab').textContent = role.collab;
+  document.getElementById('d-why').textContent = role.why;
+  const wrap = document.getElementById('d-tools');
+  wrap.innerHTML = '';
+  role.tools.forEach(t => {
+    const p = document.createElement('span');
+    p.className = 'tool-pill';
+    p.textContent = t;
+    wrap.appendChild(p);
+  });
+  const panel = document.getElementById('detail-panel');
+  panel.classList.add('open');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function closeDetail() {
+  document.getElementById('detail-panel').classList.remove('open');
+  if (activeCard) { activeCard.classList.remove('active'); activeCard = null; }
+}
+</script>
+</body>
+</html>
